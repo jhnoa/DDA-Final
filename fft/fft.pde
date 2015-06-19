@@ -13,19 +13,21 @@ void setup()
   size(512,200,P3D);
   
   minim = new Minim ( this);
-  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",2048);
+  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
   out = minim.getLineOut();
   jingle.loop();
-  jingle.mute();
+  //jingle.mute();
   fft=new FFT(jingle.bufferSize(),jingle.sampleRate());
   fft.window(FFT.NONE);
-  fft.logAverages(4,48);
+  fft.logAverages(100,12);
   
   beat = new BeatDetect();  
+  background(0);
 }
 void draw()
 {
-  background(0);
+  fill(0,20);
+  rect(0,0,width,height);
   //fft.window(fft.HAMMING);
   fft.forward(jingle.mix);
   beat.detect(jingle.mix);
@@ -49,44 +51,53 @@ void draw()
   ///if ( beat.isOnset() )
   //{
     int imax=0;
-    int iA=20;
+    int iA=14;
     boolean found=false;
-    for (int i=0;i<fft.avgSize();i++)
+    int req;
+    req=5; //notes to show
+    for (int i=fft.avgSize()-1;i>=0;i--)
     {
-      
-        if(fft.getAverageCenterFrequency(i)<200) continue;
+      if(req==0)
+      {
+        break;
+      }
+        //if(fft.getAverageCenterFrequency(i)<500) continue;
       //if(fft.getBand(i+20)==max)
       //{
         //stroke(fft.getBand(i+20)*20);
         strokeWeight(1);
         line(map(i,0,fft.avgSize(),0,width),200,map(i,0,fft.avgSize(),0,width),200-2*fft.getAvg(i));
-        if(iA<fft.getAvg(i))
+        if(fft.getAvg(i)>12)
         {
           imax=i;
           iA=int(fft.getAvg(i));
-          found=true;
+          
+          
+          stroke(255);
+          fill(255);
+          String[] n={"A","Bb","B","C","C#","D","D#","E","F","F#","G","Ab"} ;
+          //text(fft.getAverageCenterFrequency(imax),10.0,10.0);
+          
+          //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
+          float note = round(log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12);
+          
+          if(abs(pow(2, note/12) *440)-lastFreq>70)
+          {
+            //out.playNote( 0.0, 0.4, new SineInstrument( pow(2, note/12) *440 ) );
+            //lastFreq=pow(2, note/12) *440;
+          int index = int(note)%12;
+          while (index < 0) {index = index +12;}
+          println(fft.getAverageCenterFrequency(imax),n[index]);
+          text(n[index],map(imax,0,fft.avgSize(),0,width),40+(imax%12)*10);
+          ellipseMode(CENTER);
+          ellipse(map(imax,0,fft.avgSize(),0,width),200-2*fft.getAvg(imax),20,20);
+          req--;
+          }
         }
       
     }
     //println(iA);    
-    if (found)
-    {
-      stroke(255);
-      fill(255);
-      String[] n={"C","C#","D","D#","E","F","F#","G","G#","A","A#","B"} ;
-      //text(fft.getAverageCenterFrequency(imax),10.0,10.0);
-      text(n[abs((round(log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12)+3)%12)],10,10);
-      //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
-      float note = round(log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12);
-      if(pow(2, note/12) *440!=lastFreq)
-      {
-        out.playNote( 0.0, 1, new SineInstrument( pow(2, note/12) *440 ) );
-        lastFreq=pow(2, note/12) *440;
-      }
-      
-      ellipseMode(CENTER);
-      ellipse(map(imax,0,fft.avgSize(),0,width),200-2*fft.getAvg(imax),20,20);
-    }
+    
   //}
   
   
@@ -97,49 +108,4 @@ void draw()
   fill(fft.getBand(30)*70,0,150);
   rect(width/2,height/2,fft.getBand(10)*100,50);
   */
-}
-
-void keyReleased()
-{
-  WindowFunction newWindow = FFT.NONE;
-  
-  if ( key == '1' ) 
-  {
-    newWindow = FFT.BARTLETT;
-  }
-  else if ( key == '2' )
-  {
-    newWindow = FFT.BARTLETTHANN;
-  }
-  else if ( key == '3' )
-  {
-    newWindow = FFT.BLACKMAN;
-  }
-  else if ( key == '4' )
-  {
-    newWindow = FFT.COSINE;
-  }
-  else if ( key == '5' )
-  {
-    newWindow = FFT.GAUSS;
-  }
-  else if ( key == '6' )
-  {
-    newWindow = FFT.HAMMING;
-  }
-  else if ( key == '7' )
-  {
-    newWindow = FFT.HANN;
-  }
-  else if ( key == '8' )
-  {
-    newWindow = FFT.LANCZOS;
-  }
-  else if ( key == '9' )
-  {
-    newWindow = FFT.TRIANGULAR;
-  }
-
-  fft.window( newWindow );
-  //windowName = newWindow.toString();
 }
