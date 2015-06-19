@@ -15,7 +15,7 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",8192);
+  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
   out = minim.getLineOut();
   jingle.loop();
   //jingle.mute();
@@ -56,10 +56,11 @@ void draw()
   ///if ( beat.isOnset() )
   //{
     int imax=0;
-    int iA=3;
+    int iA=20;
     boolean found=false;
     int req;
     req=5; //notes to show
+    float lastFreq=0;
     for (int i=fft.avgSize()-1;i>=0;i--)
     {
       if(req==0)
@@ -72,8 +73,10 @@ void draw()
         //stroke(fft.getBand(i+20)*20);
         strokeWeight(1);
         //line(width,map(i,0,fft.avgSize(),0,width),width-2*fft.getAvg(i),map(i,0,fft.avgSize(),0,width));
+        
         if(fft.getAvg(i)>12)
         {
+          
           imax=i;
           iA=int(fft.getAvg(i));
           
@@ -86,45 +89,54 @@ void draw()
           //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
           float note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
           
-          if(abs(pow(2, note/12) *440)-lastFreq>70)
+          if(abs(fft.getAverageCenterFrequency(imax)-lastFreq)>100 || fft.getAverageCenterFrequency(imax)==lastFreq)
           {
-            //out.playNote( 0.0, 0.4, new SineInstrument( pow(2, note/12) *440 ) );
-            //lastFreq=pow(2, note/12) *440;
-          int index = (int(note))%12;
-          
-          
-          while (index < 0) {index = index + 12;}
-          /*
-          if (6 <= index && index <= 9) {index = index + 1;}
-          while (index == 5 && round(note)%12 == 6) {index = index + 1;}
-          */
-          
-          /*
-          if ( round(log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12) == round(log(fft.getAverageCenterFrequency(imax-1)/440)/log(2)*12) )
-          {
-            imax = imax + 1;
+              println(abs(fft.getAverageCenterFrequency(imax)-lastFreq));
+                //out.playNote( 0.0, 0.4, new SineInstrument( pow(2, note/12) *440 ) );
+                //lastFreq=pow(2, note/12) *440;
+              int index = (int(note))%12;
+              
+              
+              while (index < 0) {index = index + 12;}
+              /*
+              if (6 <= index && index <= 9) {index = index + 1;}
+              while (index == 5 && round(note)%12 == 6) {index = index + 1;}
+              */
+              
+              /*
+              if ( round(log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12) == round(log(fft.getAverageCenterFrequency(imax-1)/440)/log(2)*12) )
+              {
+                imax = imax + 1;
+              }
+              */
+              noStroke();
+              
+              /*
+              if(
+              index==1||
+              index==4||
+              index==6||
+              index==9||
+              index==11
+              )
+              {
+                fill(0,200,100);
+              }else
+              {
+                fill(0,100,200);
+              }
+              */
+              colorMode(HSB);
+              fill(map(index,0,12,0,270),map(fft.getAvg(imax),0,20,50,200),255);
+              //println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
+              //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
+              ellipseMode(CENTER);
+              ellipse(width-60,map(imax,0,fft.avgSize(),height,-height/2),10,10);
+              req--;
+              lastFreq=fft.getAverageCenterFrequency(imax);
+              colorMode(RGB);
           }
-          */
-          noStroke();
-          if(
-          index==1||
-          index==4||
-          index==6||
-          index==9||
-          index==11
-          )
-          {
-            fill(0,200,100);
-          }else
-          {
-            fill(0,100,200);
-          }
-          println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
-          //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
-          ellipseMode(CENTER);
-          ellipse(width-60,map(imax,0,fft.avgSize(),height,0),10,10);
-          req--;
-          }
+          
         }
       
     }
