@@ -8,12 +8,14 @@ BeatDetect beat;
 FFT fft;
 SineInstrument sineInstrument;
 float lastFreq=0;
+
+int [] pixelsOld;
 void setup()
 {
-  size(512,200,P3D);
+  size(512,512,P3D);
   
   minim = new Minim ( this);
-  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
+  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",8192);
   out = minim.getLineOut();
   jingle.loop();
   //jingle.mute();
@@ -23,11 +25,14 @@ void setup()
   
   beat = new BeatDetect();  
   background(0);
+  pixelsOld=new int[width*height];
 }
 void draw()
 {
-  fill(0,20);
-  rect(0,0,width,height);
+  
+  
+
+  //rect(0,0,width,height);
   //fft.window(fft.HAMMING);
   fft.forward(jingle.mix);
   beat.detect(jingle.mix);
@@ -40,7 +45,7 @@ void draw()
   {
     max=max<fft.getBand(i+20)?fft.getBand(i+20):max;
     //stroke(fft.getBand(i+20)*20);
-    //line(i*4,200,i*4,200-(log(fft.getBand(i+20)*20)*10));
+    //line(i*4,width,i*4,width-(log(fft.getBand(i+20)*20)*10));
   }
   */
   
@@ -51,7 +56,7 @@ void draw()
   ///if ( beat.isOnset() )
   //{
     int imax=0;
-    int iA=14;
+    int iA=3;
     boolean found=false;
     int req;
     req=5; //notes to show
@@ -66,7 +71,7 @@ void draw()
       //{
         //stroke(fft.getBand(i+20)*20);
         strokeWeight(1);
-        line(map(i,0,fft.avgSize(),0,width),200,map(i,0,fft.avgSize(),0,width),200-2*fft.getAvg(i));
+        //line(width,map(i,0,fft.avgSize(),0,width),width-2*fft.getAvg(i),map(i,0,fft.avgSize(),0,width));
         if(fft.getAvg(i)>12)
         {
           imax=i;
@@ -79,18 +84,45 @@ void draw()
           //text(fft.getAverageCenterFrequency(imax),10.0,10.0);
           
           //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
-          float note = round(log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12);
+          float note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
           
           if(abs(pow(2, note/12) *440)-lastFreq>70)
           {
             //out.playNote( 0.0, 0.4, new SineInstrument( pow(2, note/12) *440 ) );
             //lastFreq=pow(2, note/12) *440;
-          int index = int(note)%12;
-          while (index < 0) {index = index +12;}
-          println(fft.getAverageCenterFrequency(imax),n[index]);
-          text(n[index],map(imax,0,fft.avgSize(),0,width),40+(imax%12)*10);
+          int index = (int(note))%12;
+          
+          
+          while (index < 0) {index = index + 12;}
+          /*
+          if (6 <= index && index <= 9) {index = index + 1;}
+          while (index == 5 && round(note)%12 == 6) {index = index + 1;}
+          */
+          
+          /*
+          if ( round(log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12) == round(log(fft.getAverageCenterFrequency(imax-1)/440)/log(2)*12) )
+          {
+            imax = imax + 1;
+          }
+          */
+          noStroke();
+          if(
+          index==1||
+          index==4||
+          index==6||
+          index==9||
+          index==11
+          )
+          {
+            fill(0,200,100);
+          }else
+          {
+            fill(0,100,200);
+          }
+          println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
+          //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
           ellipseMode(CENTER);
-          ellipse(map(imax,0,fft.avgSize(),0,width),200-2*fft.getAvg(imax),20,20);
+          ellipse(width-60,map(imax,0,fft.avgSize(),height,0),10,10);
           req--;
           }
         }
@@ -108,4 +140,27 @@ void draw()
   fill(fft.getBand(30)*70,0,150);
   rect(width/2,height/2,fft.getBand(10)*100,50);
   */
+  
+  
+  
+  loadPixels(); //Prepare the pixels array
+
+
+  for(int z=0;z<10;z++) //move canvas Z times
+  {
+    for(int i = 0; i < pixels.length; i ++) { //Loop through all of the pixels, position 0 is the top left corner going right and then down
+      if(i % width != 0 && i < pixels.length - 1) pixels[i] = pixels[i + 1]; //Assign each pixel to be the pixel to its right...
+      else pixels[i] = color(0); //...unless it is at the end of a line or is the last one, in which case we make it the background color
+    }
+    updatePixels(); //Update the pixels array to the screen
+  }
+  
+    //fill(0,0);
+  //rect(0,0,width,height);
+  
+  
+  
+  
+    
+
 }
