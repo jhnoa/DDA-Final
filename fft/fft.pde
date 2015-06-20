@@ -17,7 +17,7 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  String fname="bach-toccata-and-fugue-in-d-minor-(frederik-magle).mp3";
+  String fname="10 One Day Diary_[plixid.com].mp3";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
@@ -65,10 +65,9 @@ void draw()
   ///if ( beat.isOnset() )
   //{
     int imax=0;
-    int iA=20;
     boolean found=false;
     int req;
-    req=5; //notes to show
+    req=3; //notes to show
     float lastFreq=0;
     for (int i=fft.avgSize()-1;i>=0;i--)
     {
@@ -83,11 +82,10 @@ void draw()
         //strokeWeight(1);
         //line(width,map(i,0,fft.avgSize(),0,width),width-2*fft.getAvg(i),map(i,0,fft.avgSize(),0,width));
         
-        if(fft.getAvg(i)>12)
+        if(fft.getAvg(i)>14)
         {
           
           imax=i;
-          iA=int(fft.getAvg(i));
           
           
           //stroke(255);
@@ -181,6 +179,7 @@ void draw()
   
   fill(240,50);
   rect(1,0, 30,height);
+  String lastString="";
   for(int i=0;i<height;i+=10)
   {
     if(brightness(pixels[30+1+i*height])>0)
@@ -192,8 +191,20 @@ void draw()
       
       fill(220,20,20);
       rect(i/width+5,i%width-(5/2),30-2*5,5);
+      /*
+      RIP Text
       fill(255);
-      text(n[11-index],width-30,map(imax,0,fft.avgSize(),0,height));
+      
+      if(lastString!=n[11-index])
+      {
+        //println(n[11-index],lastString);
+        if(lastString!="")
+        {
+          text(n[11-index],width-30,map(imax,0,fft.avgSize(),0,height));
+        }
+        lastString=n[11-index];
+      }
+      */
       //text("lol",i/width+20,imax);
       //println(pixels[30+1+i*height]);
     }
