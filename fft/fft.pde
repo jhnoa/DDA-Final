@@ -131,7 +131,7 @@ void draw()
               //println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
               //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
               ellipseMode(CENTER);
-              ellipse(width-60,map(imax,0,fft.avgSize(),height,-height/2),10,10);
+              ellipse(width-10,map(imax,0,fft.avgSize(),height,-height/2),10,10);
               req--;
               lastFreq=fft.getAverageCenterFrequency(imax);
               colorMode(RGB);
