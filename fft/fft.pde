@@ -19,7 +19,7 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  String fname="36 - Cascade.mp3";
+  String fname="bach-toccata-and-fugue-in-d-minor-(frederik-magle).mp3";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
@@ -116,7 +116,7 @@ void draw()
           //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
           note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
           
-          if(abs(fft.getAverageCenterFrequency(imax)-lastFreq)>lastFreq*120.0/100.0 || fft.getAverageCenterFrequency(imax)==lastFreq)
+          if(abs(fft.getAverageCenterFrequency(imax)-lastFreq)>lastFreq*20.0/100.0 || fft.getAverageCenterFrequency(imax)==lastFreq)
           {
               //println(abs(fft.getAverageCenterFrequency(imax)-lastFreq));
                 //out.playNote( 0.0, 0.4, new SineInstrument( pow(2, note/12) *440 ) );
