@@ -6,6 +6,8 @@ AudioPlayer jingle, jingle1;
 AudioOutput out;
 BeatDetect beat;
 FFT fft;
+boolean runOnce=true;
+float m;
 SineInstrument sineInstrument;
 float lastFreq=0;
 String[] n={"A","Bb","B","C","C#","D","D#","E","F","F#","G","Ab"} ;
@@ -17,15 +19,13 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  String fname="10 One Day Diary_[plixid.com].mp3";
+  String fname="17 Kiss The Rain_[plixid.com].mp3";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
   jingle.loop();
   jingle.mute();
-  float m = millis();
-  while(millis()-m < 900);
-  jingle1.loop();
+  m = millis();
   //jingle.mute();
   fft=new FFT(jingle.bufferSize(),jingle.sampleRate());
   fft.window(FFT.NONE);
@@ -37,9 +37,14 @@ void setup()
 }
 void draw()
 {
-  
-  
-
+  if(millis()-m > 900)
+  {
+    if(runOnce)
+    {
+      runOnce=false;
+      jingle1.loop();
+    }
+  }
   //rect(0,0,width,height);
   //fft.window(fft.HAMMING);
   fft.forward(jingle.mix);
@@ -82,7 +87,7 @@ void draw()
         //strokeWeight(1);
         //line(width,map(i,0,fft.avgSize(),0,width),width-2*fft.getAvg(i),map(i,0,fft.avgSize(),0,width));
         
-        if(fft.getAvg(i)>14)
+        if(fft.getAvg(i)>2)
         {
           
           imax=i;
