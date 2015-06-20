@@ -17,7 +17,7 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  String fname="17 Kiss The Rain_[plixid.com].mp3";
+  String fname="bach-toccata-and-fugue-in-d-minor-(frederik-magle).mp3";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
@@ -179,7 +179,7 @@ void draw()
   
 
   
-  fill(240,30);
+  fill(240,50);
   rect(1,0, 30,height);
   for(int i=0;i<height;i+=10)
   {
