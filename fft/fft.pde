@@ -8,15 +8,18 @@ BeatDetect beat;
 FFT fft;
 SineInstrument sineInstrument;
 float lastFreq=0;
-
+String[] n={"A","Bb","B","C","C#","D","D#","E","F","F#","G","Ab"} ;
+  float note;
+  int index;
 int [] pixelsOld;
 void setup()
 {
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
-  jingle1 = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
+  String fname="17 Kiss The Rain_[plixid.com].mp3";
+  jingle = minim.loadFile(fname,4096);
+  jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
   jingle.loop();
   jingle.mute();
@@ -42,7 +45,8 @@ void draw()
   fft.forward(jingle.mix);
   beat.detect(jingle.mix);
   beat.setSensitivity(2);
-  stroke(0,255,0);
+  noStroke();
+  //stroke(0,255,0);
   
   double max=0;
   /*
@@ -76,7 +80,7 @@ void draw()
       //if(fft.getBand(i+20)==max)
       //{
         //stroke(fft.getBand(i+20)*20);
-        strokeWeight(1);
+        //strokeWeight(1);
         //line(width,map(i,0,fft.avgSize(),0,width),width-2*fft.getAvg(i),map(i,0,fft.avgSize(),0,width));
         
         if(fft.getAvg(i)>12)
@@ -86,20 +90,20 @@ void draw()
           iA=int(fft.getAvg(i));
           
           
-          stroke(255);
+          //stroke(255);
           fill(255);
-          String[] n={"A","Bb","B","C","C#","D","D#","E","F","F#","G","Ab"} ;
+          
           //text(fft.getAverageCenterFrequency(imax),10.0,10.0);
           
           //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
-          float note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
+          note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
           
           if(abs(fft.getAverageCenterFrequency(imax)-lastFreq)>100 || fft.getAverageCenterFrequency(imax)==lastFreq)
           {
-              println(abs(fft.getAverageCenterFrequency(imax)-lastFreq));
+              //println(abs(fft.getAverageCenterFrequency(imax)-lastFreq));
                 //out.playNote( 0.0, 0.4, new SineInstrument( pow(2, note/12) *440 ) );
                 //lastFreq=pow(2, note/12) *440;
-              int index = (int(note))%12;
+              index = (int(note))%12;
               
               
               while (index < 0) {index = index + 12;}
@@ -166,16 +170,38 @@ void draw()
   for(int z=0;z<10;z++) //move canvas Z times
   {
     for(int i = 0; i < pixels.length; i ++) { //Loop through all of the pixels, position 0 is the top left corner going right and then down
-      if(i % width != 0 && i < pixels.length - 1) pixels[i] = pixels[i + 1]; //Assign each pixel to be the pixel to its right...
-      else pixels[i] = color(0); //...unless it is at the end of a line or is the last one, in which case we make it the background color
+      if(i%width > width-50) continue;
+      if(i % width > 30 && i < pixels.length - 1) pixels[i] = pixels[i + 1]; //Assign each pixel to be the pixel to its right...
+      //else pixels[i] = color(0); //...unless it is at the end of a line or is the last one, in which case we make it the background color
     }
     updatePixels(); //Update the pixels array to the screen
   }
   
-    //fill(0,0);
-  //rect(0,0,width,height);
-  fill(255);
-  rect(10,0, 20,height);
+
+  
+  fill(240,30);
+  rect(1,0, 30,height);
+  for(int i=0;i<height;i+=10)
+  {
+    if(brightness(pixels[30+1+i*height])>0)
+    {
+      imax=int(map(i,0,height,0,fft.avgSize()));
+      note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
+      index = (int(note))%12;
+      while (index < 0) {index = index + 12;}
+      
+      fill(220,20,20);
+      rect(i/width+5,i%width-(5/2),30-2*5,5);
+      fill(255);
+      text(n[11-index],width-30,map(imax,0,fft.avgSize(),0,height));
+      //text("lol",i/width+20,imax);
+      //println(pixels[30+1+i*height]);
+    }
+  }
+  noStroke();
+  fill(0,50);
+  rect(width-50,0,width,height);
+  
   
   
   
