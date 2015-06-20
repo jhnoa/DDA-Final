@@ -2,7 +2,7 @@ import ddf.minim.analysis.*;
 import ddf.minim.*;
 import ddf.minim.ugens.*;
 Minim minim;
-AudioPlayer jingle;
+AudioPlayer jingle, jingle1;
 AudioOutput out;
 BeatDetect beat;
 FFT fft;
@@ -16,8 +16,13 @@ void setup()
   
   minim = new Minim ( this);
   jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
+  jingle1 = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
   out = minim.getLineOut();
   jingle.loop();
+  jingle.mute();
+  float m = millis();
+  while(millis()-m < 900);
+  jingle1.loop();
   //jingle.mute();
   fft=new FFT(jingle.bufferSize(),jingle.sampleRate());
   fft.window(FFT.NONE);
@@ -131,7 +136,7 @@ void draw()
               //println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
               //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
               ellipseMode(CENTER);
-              ellipse(width-10,map(imax,0,fft.avgSize(),height,-height/2),10,10);
+              ellipse(width-60,map(imax,0,fft.avgSize(),height,-height/2),10,10);
               req--;
               lastFreq=fft.getAverageCenterFrequency(imax);
               colorMode(RGB);
@@ -169,7 +174,8 @@ void draw()
   
     //fill(0,0);
   //rect(0,0,width,height);
-  
+  fill(255);
+  rect(10,0, 20,height);
   
   
   
