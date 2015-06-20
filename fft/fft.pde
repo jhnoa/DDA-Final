@@ -6,6 +6,7 @@ AudioPlayer jingle, jingle1;
 AudioOutput out;
 BeatDetect beat;
 FFT fft;
+TextDelayed testText;
 SineInstrument sineInstrument;
 float lastFreq=0;
 
@@ -13,10 +14,10 @@ int [] pixelsOld;
 void setup()
 {
   size(512,512,P3D);
-  
+  String fname="35 - Sburban Jungle.mp3";
   minim = new Minim ( this);
-  jingle = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
-  jingle1 = minim.loadFile("17 Kiss The Rain_[plixid.com].mp3",4096);
+  jingle = minim.loadFile(fname,4096);
+  jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
   jingle.loop();
   jingle.mute();
@@ -132,11 +133,13 @@ void draw()
               }
               */
               colorMode(HSB);
-              fill(map(index,0,12,0,270),map(fft.getAvg(imax),0,20,50,200),255);
+              fill(map(index,0,12,0,270),map(fft.getAvg(imax),0,40,50,200),255);
               //println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
-              //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
+              //text(n[index],width-30,map(imax,0,fft.avgSize(),height,-height/2));
+              testText=new TextDelayed("Hello World!",500);
+              testText.start();
               ellipseMode(CENTER);
-              ellipse(width-60,map(imax,0,fft.avgSize(),height,-height/2),10,10);
+              ellipse(width-60,floor(map(imax,0,fft.avgSize(),height,-height/2)/10.0)*10,10,10);
               req--;
               lastFreq=fft.getAverageCenterFrequency(imax);
               colorMode(RGB);
@@ -166,19 +169,23 @@ void draw()
   for(int z=0;z<10;z++) //move canvas Z times
   {
     for(int i = 0; i < pixels.length; i ++) { //Loop through all of the pixels, position 0 is the top left corner going right and then down
+      if (i%width>=width-50)
+       {
+         continue;
+       }
       if(i % width != 0 && i < pixels.length - 1) pixels[i] = pixels[i + 1]; //Assign each pixel to be the pixel to its right...
       else pixels[i] = color(0); //...unless it is at the end of a line or is the last one, in which case we make it the background color
     }
     updatePixels(); //Update the pixels array to the screen
   }
-  
-    //fill(0,0);
-  //rect(0,0,width,height);
+  noStroke();
+  fill(0,20);
+  rect(width-50,0,width,height);
   fill(255);
-  rect(10,0, 20,height);
+  rect(0,0, 30,height);
   
   
   
     
-
+  
 }
