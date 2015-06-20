@@ -19,7 +19,7 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  String fname="17 Kiss The Rain_[plixid.com].mp3";
+  String fname="36 - Cascade.mp3";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
@@ -72,14 +72,29 @@ void draw()
     int imax=0;
     boolean found=false;
     int req;
-    req=3; //notes to show
+    req=4; //notes to show
     float lastFreq=0;
+    
+    
+    //Atur Sensitivity
+    int threshold=2;
+    int notesFound=0;
+    do
+    {
+      notesFound=0;
+      for (int i=fft.avgSize()-1;i>=0;i--)
+      {
+        if(fft.getAvg(i)>threshold)
+        {
+          notesFound++;
+        }
+      }
+      threshold++;
+      println(threshold);
+    }while(notesFound>req+ceil(random(20.0/100.0*req)));
+    
     for (int i=fft.avgSize()-1;i>=0;i--)
     {
-      if(req==0)
-      {
-        break;
-      }
         //if(fft.getAverageCenterFrequency(i)<500) continue;
       //if(fft.getBand(i+20)==max)
       //{
@@ -87,7 +102,7 @@ void draw()
         //strokeWeight(1);
         //line(width,map(i,0,fft.avgSize(),0,width),width-2*fft.getAvg(i),map(i,0,fft.avgSize(),0,width));
         
-        if(fft.getAvg(i)>2)
+        if(fft.getAvg(i)>threshold)
         {
           
           imax=i;
@@ -101,7 +116,7 @@ void draw()
           //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
           note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
           
-          if(abs(fft.getAverageCenterFrequency(imax)-lastFreq)>100 || fft.getAverageCenterFrequency(imax)==lastFreq)
+          if(abs(fft.getAverageCenterFrequency(imax)-lastFreq)>lastFreq*120.0/100.0 || fft.getAverageCenterFrequency(imax)==lastFreq)
           {
               //println(abs(fft.getAverageCenterFrequency(imax)-lastFreq));
                 //out.playNote( 0.0, 0.4, new SineInstrument( pow(2, note/12) *440 ) );
@@ -144,7 +159,6 @@ void draw()
               //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
               ellipseMode(CENTER);
               ellipse(width-60,map(imax,0,fft.avgSize(),height,-height/2),10,10);
-              req--;
               lastFreq=fft.getAverageCenterFrequency(imax);
               colorMode(RGB);
           }
