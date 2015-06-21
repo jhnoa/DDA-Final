@@ -19,7 +19,7 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  String fname="bach-toccata-and-fugue-in-d-minor-(frederik-magle).mp3";
+  String fname="17 Kiss The Rain_[plixid.com].mp3";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
@@ -29,7 +29,7 @@ void setup()
   //jingle.mute();
   fft=new FFT(jingle.bufferSize(),jingle.sampleRate());
   fft.window(FFT.NONE);
-  fft.logAverages(100,12);
+  fft.logAverages(100,96);
   
   beat = new BeatDetect();  
   background(0);
@@ -158,7 +158,7 @@ void draw()
               //println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
               //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
               ellipseMode(CENTER);
-              ellipse(width-60,map(imax,0,fft.avgSize(),height,-height/2),10,10);
+              ellipse(width-60,round((map(imax,0,fft.avgSize(),height,-height/2)/5.0))*5.0,10,10);
               lastFreq=fft.getAverageCenterFrequency(imax);
               colorMode(RGB);
           }
