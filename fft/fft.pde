@@ -6,6 +6,7 @@ AudioPlayer jingle, jingle1;
 AudioOutput out;
 BeatDetect beat;
 FFT fft;
+PImage img;
 boolean runOnce=true;
 float m;
 SineInstrument sineInstrument;
@@ -19,7 +20,7 @@ void setup()
   size(512,512,P3D);
   
   minim = new Minim ( this);
-  String fname="17 Kiss The Rain_[plixid.com].mp3";
+  String fname="aNotes.wav";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
@@ -30,6 +31,7 @@ void setup()
   fft=new FFT(jingle.bufferSize(),jingle.sampleRate());
   fft.window(FFT.NONE);
   fft.logAverages(100,96);
+  img = loadImage("piano.png");
   
   beat = new BeatDetect();  
   background(0);
@@ -158,7 +160,7 @@ void draw()
               //println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
               //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
               ellipseMode(CENTER);
-              ellipse(width-60,round((map(imax,0,fft.avgSize(),height,-height/2)/5.0))*5.0,10,10);
+              ellipse(width-60,round((map(imax,0,fft.avgSize(),height,-height/2)/5.0))*5.0+8,10,10);
               lastFreq=fft.getAverageCenterFrequency(imax);
               colorMode(RGB);
           }
@@ -194,10 +196,10 @@ void draw()
     updatePixels(); //Update the pixels array to the screen
   }
   
-
   
-  fill(240,50);
-  rect(1,0, 30,height);
+  image(img,0,-49,30,height+100);
+  //fill(240,50);
+  //rect(1,0, 30,height);
   String lastString="";
   for(int i=0;i<height;i+=10)
   {
