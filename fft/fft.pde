@@ -17,10 +17,10 @@ String[] n={"A","Bb","B","C","C#","D","D#","E","F","F#","G","Ab"} ;
 int [] pixelsOld;
 void setup()
 {
-  size(512,512,P3D);
+  size(600,600,P3D);
   
   minim = new Minim ( this);
-  String fname="aNotes.wav";
+  String fname="35 - Sburban Jungle.mp3";
   jingle = minim.loadFile(fname,4096);
   jingle1 = minim.loadFile(fname,4096);
   out = minim.getLineOut();
@@ -116,7 +116,7 @@ void draw()
           //text(fft.getAverageCenterFrequency(imax),10.0,10.0);
           
           //out.playNote( 0.0, 0.5, new SineInstrument( fft.getAverageCenterFrequency(imax) ) );
-          note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12;
+          note = log(fft.getAverageCenterFrequency(imax)/440)/log(2)*12 +49;
           
           if(abs(fft.getAverageCenterFrequency(imax)-lastFreq)>lastFreq*20.0/100.0 || fft.getAverageCenterFrequency(imax)==lastFreq)
           {
@@ -160,7 +160,11 @@ void draw()
               //println(fft.getAverageCenterFrequency(imax),note,index,n[index]);
               //text(n[index],40+(imax%12)*10,map(imax,0,fft.avgSize(),0,height));
               ellipseMode(CENTER);
-              ellipse(width-60,round((map(imax,0,fft.avgSize(),height,-height/2)/5.0))*5.0+8,10,10);
+              float yezz=round((map(imax,0,fft.avgSize(),height,-height/2)/5.0))*5.0+8;
+              if(yezz < height - 20) 
+              {
+                ellipse(width-60,round((map(imax,0,fft.avgSize(),height,-height/2)/5.0))*5.0+8,10,10);
+              }
               lastFreq=fft.getAverageCenterFrequency(imax);
               colorMode(RGB);
           }
@@ -197,7 +201,7 @@ void draw()
   }
   
   
-  image(img,0,-49,30,height+100);
+  image(img,0,-20,30,height+225);
   //fill(240,50);
   //rect(1,0, 30,height);
   String lastString="";
